@@ -38,12 +38,16 @@ public class Server {
 
                     ClientHandler handler1 = new ClientHandler(gracz1);
                     ClientHandler handler2 = new ClientHandler(gracz2);
+
+                    handler1.ustawprzeciwnika(handler2);
+                    handler2.ustawprzeciwnika(handler1);
                     new Thread(handler1).start();
                     new Thread(handler2).start();
 
                     handler1.wyslij("START CZARNY");
                     handler2.wyslij("START BIALY");
-                    break;
+                    handler1.wyslij("TWOJ_RUCH");
+
                 }else{
                     System.out.println("niestety ten serwer jeest pełny :( odrzucam połączenie...");
                     PrintWriter tempOut = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -52,15 +56,11 @@ public class Server {
                 }
 
             }
-            System.out.println("Serwer działa dalej...");
 
-            while (true) {
-                Thread.sleep(1000);
-            }
 
             
         }
-        catch (IOException | InterruptedException e){
+        catch (IOException e){
                 System.out.println("błąd serwera: " + e.getMessage());
             }
         }

@@ -10,6 +10,7 @@ public class ClientHandler implements Runnable {
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
+    private ClientHandler przeciwnik;
 
     public ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
@@ -20,12 +21,21 @@ public class ClientHandler implements Runnable {
     public void wyslij(String wiadomosc) {
         out.println(wiadomosc);
     }
+    public void ustawprzeciwnika(ClientHandler przeciwnik) {
+    this.przeciwnik = przeciwnik;
+}
+
     @Override
     public void run() {
         try {
             String linia;
             while ((linia = in.readLine()) != null) {
                 System.out.println("[OD KLIENTA " + socket.getInetAddress() + "] " + linia);
+
+                if(przeciwnik != null){
+                    przeciwnik.wyslij("RUCH PRZECIWNIKA " + linia);
+                    przeciwnik.wyslij("TWOJ_RUCH");
+                }
             }
         } catch (IOException e) {
             System.out.println("Klient rozłączony: " + socket.getInetAddress());
