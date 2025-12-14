@@ -95,6 +95,10 @@ public class Board {
         }
         return lines;
     }
+<<<<<<< HEAD
 }
 
 
+=======
+}
+>>>>>>> 1ff4436b9ad1354c861069e3fc577c876a4d012b
