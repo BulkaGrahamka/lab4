@@ -2,14 +2,10 @@ package org.example.board;
 
 import java.util.*;
 
-/**
- * Klasa Board odpowiada WYŁĄCZNIE za stan planszy i reguły Go.
- * Serwer korzysta z niej jako jedynego źródła prawdy.
- */
 public class Board {
     private final int size;
     private final int[][] grid;
-    private int currentPlayer = 1;
+    private int currentPlayer = 1; //1 - czarny, 2- bialy
     private final int[][] dirs = {{1,0}, {-1,0}, {0,1}, {0,-1}};
 
     public Board(int size) {
@@ -21,7 +17,6 @@ public class Board {
     }
 
     public synchronized int playMove(int row, int col, int player) {
-        if (player != currentPlayer) return -1;
         if (!inBounds(row, col) || grid[row][col] != 0) return -1;
 
         int enemy = (player == 1) ? 2 : 1;
@@ -34,7 +29,7 @@ public class Board {
             if (!inBounds(nRow, nCol)) continue;
             if (grid[nRow][nCol] == enemy) {
                 if (!hasLiberties(nRow, nCol, grid)) {
-                    captured += removeGroup(nRow, nCol, enemy); //zliczamy punkty
+                    captured += removeGroup(nRow, nCol, player);
                 }
             }
         }
@@ -56,32 +51,9 @@ public class Board {
         if (grid[row][col] == 0) return 0;
 
         int removed = 0;
-        Stack<int[]> stack = new Stack<>();
-        stack.push(new int[]{row, col});
-        grid[row][col] = -player; //oznaczenie pola zeby nie liczyc go ponownie
-
-        while (!stack.isEmpty()) {
-            int[] pop = stack.pop();
-            int pRow = pop[0];
-            int pCol = pop[1];
+        if (grid[row][col] == player) {
+            grid[row][col] = 0;
             removed++;
-            for (int[] dir : dirs) {
-                int nRow = pRow + dir[0];
-                int nCol = pCol + dir[1];
-                if (!inBounds(nRow, nCol)) continue;
-                if (grid[nRow][nCol] == player) {
-                    stack.push(new int[]{nRow, nCol});
-                    grid[nRow][nCol] = -player;
-                }
-            }
-        }
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (grid[i][j] == -player) {
-                    grid[i][j] = 0;
-                }
-            }
         }
 
         return removed;
@@ -92,25 +64,12 @@ public class Board {
         int color = boardCopy[row][col];
         if (color == 0) return true;
 
-        boolean[][] visited = new boolean[size][size];
-
-        Stack<int[]> stack = new Stack<>();
-        stack.push(new int[]{row, col});
-        visited[row][col] = true;
-
-        while (!stack.isEmpty()) {
-            int[] pop = stack.pop();
-            int pRow = pop[0];
-            int pCol = pop[1];
-            for (int[] dir : dirs) {
-                int nRow = pRow + dir[0];
-                int nCol = pCol + dir[1];
-                if (!inBounds(nRow, nCol)) continue;
-                if (boardCopy[nRow][nCol] == 0) return true;
-                if (!visited[nRow][nCol] && boardCopy[nRow][nCol] == color) {
-                    visited[nRow][nCol] = true;
-                    stack.push(new int[]{nRow, nCol});
-                }
+        for (int[] dir : dirs) {
+            int nRow = row + dir[0];
+            int nCol = col + dir[1];
+            if (!inBounds(nRow, nCol)) continue;
+            if (grid[nRow][nCol] == 0) {
+                return true;
             }
         }
         return false;
@@ -120,9 +79,6 @@ public class Board {
         return row >= 0 && col >= 0 && row < size && col < size;
     }
 
-    /**
-     * ASCII plansza – gotowa do wysłania do klienta
-     */
     public synchronized String toString() {
         StringBuilder sb = new StringBuilder();
         for (int col = 0; col < size; col++) {
