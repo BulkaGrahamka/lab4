@@ -5,7 +5,6 @@ import java.util.*;
 public class Board {
     private final int size;
     private final int[][] grid;
-    private int currentPlayer = 1; //1 - czarny, 2- bialy
     private final int[][] dirs = {{1,0}, {-1,0}, {0,1}, {0,-1}};
 
     public Board(int size) {
@@ -41,8 +40,6 @@ public class Board {
                 return -2;
             }
         }
-
-        currentPlayer = enemy;
         return captured;
     }
 
@@ -79,21 +76,21 @@ public class Board {
         return row >= 0 && col >= 0 && row < size && col < size;
     }
 
-    public synchronized String toString() {
-        StringBuilder sb = new StringBuilder();
+    public synchronized List<String> printBoard() {
+        List<String> lines = new ArrayList<>();
         for (int col = 0; col < size; col++) {
-            sb.append(String.format("%2d", col));
+            lines.add(String.format("%2d", col));
         }
         for (int row = 0; row < size; row++) {
-            sb.append(String.format("%2d", row));
+            StringBuilder line = new StringBuilder();
             for (int col = 0; col < size; col++) {
                 char ch = '.';
                 if (grid[row][col] == 1) ch = 'C';
                 if (grid[row][col] == 2) ch = 'B';
-                sb.append(" ").append(ch);
+                line.append(" ").append(ch);
             }
-            sb.append('\n');
+            lines.add(line.toString());
         }
-        return sb.toString();
+        return lines;
     }
 }
