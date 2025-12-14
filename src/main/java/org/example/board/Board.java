@@ -28,7 +28,7 @@ public class Board {
             if (!inBounds(nRow, nCol)) continue;
             if (grid[nRow][nCol] == enemy) {
                 if (!hasLiberties(nRow, nCol, grid)) {
-                    captured += removeGroup(nRow, nCol, player);
+                    captured += removeGroup(nRow, nCol, enemy);
                 }
             }
         }
@@ -65,7 +65,7 @@ public class Board {
             int nRow = row + dir[0];
             int nCol = col + dir[1];
             if (!inBounds(nRow, nCol)) continue;
-            if (grid[nRow][nCol] == 0) {
+            if (boardCopy[nRow][nCol] == 0) {
                 return true;
             }
         }
@@ -76,13 +76,15 @@ public class Board {
         return row >= 0 && col >= 0 && row < size && col < size;
     }
 
-    public synchronized List<String> printBoard() {
+    public synchronized List<String> getBoardLines() {
         List<String> lines = new ArrayList<>();
+        StringBuilder line0 = new StringBuilder("  ");
         for (int col = 0; col < size; col++) {
-            lines.add(String.format("%2d", col));
+            line0.append(String.format("%2d", col));
         }
+        lines.add(line0.toString());
         for (int row = 0; row < size; row++) {
-            StringBuilder line = new StringBuilder();
+            StringBuilder line = new StringBuilder(String.format("%2d", row));
             for (int col = 0; col < size; col++) {
                 char ch = '.';
                 if (grid[row][col] == 1) ch = 'C';
