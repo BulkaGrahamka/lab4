@@ -36,6 +36,13 @@ public class Client{
                             System.out.println("Serwer jest pelny :( Rozłączono");
                             socket.close();
                             break;
+                        } else if(msg.equals("PLANSZA")){
+                            for (int i = 0; i < 19; i++) {
+                                String liniaplanszy = in.readLine();
+                                    System.out.println(liniaplanszy);
+                            }
+
+                            System.out.println(); 
                         }
                         else{
                             System.out.println("Serwer: " + msg);
