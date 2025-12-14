@@ -1,5 +1,6 @@
 package org.example.server;
 
+import org.example.board.Board;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -8,6 +9,8 @@ import java.net.Socket;
 public class Server {
     private Socket gracz1;
     private Socket gracz2;
+    private final Board board = new Board(19);
+
 
     public static void main(String[] args){
         Server server = new Server();
@@ -36,8 +39,9 @@ public class Server {
                     System.out.println("gracz 2 (biały) połączony :)");
                     System.out.println("dwóch graczy połączonych - zaczynamy gre! powodzenia!!");
 
-                    ClientHandler handler1 = new ClientHandler(gracz1);
-                    ClientHandler handler2 = new ClientHandler(gracz2);
+                    ClientHandler handler1 = new ClientHandler(gracz1, board, 1);
+                    ClientHandler handler2 = new ClientHandler(gracz2, board, 2);
+
 
                     handler1.ustawprzeciwnika(handler2);
                     handler2.ustawprzeciwnika(handler1);

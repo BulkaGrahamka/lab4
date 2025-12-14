@@ -37,16 +37,14 @@ public class Client{
                             socket.close();
                             break;
                         } else if(msg.equals("PLANSZA")){
-                            for (int i = 0; i < 19; i++) {
+                            for (int i = 0; i < 20; i++) {
                                 String liniaplanszy = in.readLine();
                                     System.out.println(liniaplanszy);
                             }
 
                             System.out.println(); 
                         }
-                        else{
-                            System.out.println("Serwer: " + msg);
-                        }        
+                             
                     }
                 }catch (IOException e){
                     System.out.println("rozłączono z serwerem");
