@@ -8,26 +8,22 @@ public class GameWindow {
 
     private final BorderPane korzen;
     private final Label pasekStatusu;
-    private final Label miejsceNaPlansze;
+    private final BoardView plansza;
 
     public GameWindow() {
         korzen=new BorderPane();
-        pasekStatusu=new Label("status: GUI uruchomione");
-        miejsceNaPlansze= new Label("plansza gry (do zaimplementowania)");
+        pasekStatusu=new Label("status: GUI z pusta plansza");
+        plansza=new BoardView();
+
         inicjalizujUklad();
     }
     private void inicjalizujUklad() {
-        miejsceNaPlansze.setStyle(
-            "-fx-border-color: pink;" +
-            "-fx-alignment: center;" +
-            "-fx-font-size: 18px;"
-        );
         pasekStatusu.setStyle(
-            "-fx-padding: 10;" +
-            "-fx-border-color: pink;"
+            "-fx-border-color: pink;" +
+            "-fx-padding: 10;"
         );
 
-        korzen.setCenter(miejsceNaPlansze);
+        korzen.setCenter(plansza);
         korzen.setBottom(pasekStatusu);
     }
     public Parent getKorzen() {
