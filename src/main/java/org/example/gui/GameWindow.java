@@ -11,22 +11,31 @@ public class GameWindow {
     private final BoardView plansza;
 
     public GameWindow() {
-        korzen=new BorderPane();
-        pasekStatusu=new Label("status: GUI z pusta plansza");
-        plansza=new BoardView();
+        korzen = new BorderPane();
+        pasekStatusu = new Label("Status: kliknij pole");
+        plansza = new BoardView(pole -> {
+            pasekStatusu.setText(
+                "Kliknięto pole: (" +
+                pole.getWiersz() + ", " +
+                pole.getKolumna() + ")"
+            );
+        });
 
         inicjalizujUklad();
     }
+
     private void inicjalizujUklad() {
         pasekStatusu.setStyle(
-            "-fx-border-color: pink;" +
+            "-fx-border-color: pink;"+
             "-fx-padding: 10;"
         );
 
         korzen.setCenter(plansza);
         korzen.setBottom(pasekStatusu);
     }
+
     public Parent getKorzen() {
         return korzen;
     }
 }
+
