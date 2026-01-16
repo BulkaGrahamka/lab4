@@ -5,8 +5,14 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ComboBox;
-public class GameWindow {
-
+public class GameWindow implements GameStateListener {
+    @Override
+    public void onBoardUpdate(char[][] planszaZSerwera) {
+        javafx.application.Platform.runLater(() -> {
+            plansza.wyswietlPlansze(planszaZSerwera);
+            pasekStatusu.setText("Plansza zsynchronizowana z serwerem");
+        });
+    }
     private final BorderPane korzen;
     private final Label pasekStatusu;
     private BoardView plansza;

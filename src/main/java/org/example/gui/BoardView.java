@@ -14,7 +14,23 @@ public class BoardView extends GridPane {
         this.rozmiar =rozmiar;
         inicjalizujPlansze();
     }
+    public void wyswietlPlansze(char[][] dane) {
+        getChildren().clear();
 
+        for (int wiersz = 0; wiersz < dane.length; wiersz++) {
+            for (int kol=0; kol < dane[wiersz].length; kol++) {
+                Field pole = new Field(wiersz, kol);
+
+                if (dane[wiersz][kol] == 'C') {
+                    pole.ustawKamien(StoneType.BLACK);
+                } else if (dane[wiersz][kol] =='B') {
+                    pole.ustawKamien(StoneType.WHITE);
+                }
+
+                add(pole, kol, wiersz);
+            }
+        }
+    }
     private void inicjalizujPlansze() {
         getChildren().clear();
 

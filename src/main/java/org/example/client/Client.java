@@ -5,13 +5,19 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import org.example.gui.GameStateListener;
+
 public class Client{
+    private GameStateListener sluchacz;
     private Socket socket;
     private volatile boolean mojatura=false;
     public static void main(String[] args){
         Client klient = new Client();
         klient.polaczzserwerem("localhost", 6767);
 
+    }
+    public void ustawGameStateListener(GameStateListener sluchacz) {
+        this.sluchacz = sluchacz;
     }
 
     public void polaczzserwerem(String host, int port){
@@ -37,12 +43,20 @@ public class Client{
                             socket.close();
                             break;
                         } else if(msg.equals("PLANSZA")){
-                            for (int i = 0; i < 20; i++) {
-                                String liniaplanszy = in.readLine();
-                                    System.out.println(liniaplanszy);
+                            char[][] plansza = new char[19][19];
+
+                            in.readLine();
+                            for (int wiersz = 0; wiersz< 19; wiersz++) {
+                                String linia = in.readLine();
+                                for (int kol=0; kol < 19; kol++) {
+                                    char c = linia.charAt(3 + kol * 2);
+                                    plansza[wiersz][kol] = c;
+                                }
                             }
 
-                            System.out.println(); 
+                            if (sluchacz!= null) {
+                                sluchacz.onBoardUpdate(plansza);
+                            }
                         }
                              
                     }
