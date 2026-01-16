@@ -8,6 +8,7 @@ public class BoardView extends GridPane {
     public static final int ROZMIAR_PLANSZY = 19;
 
     private final Consumer<Field> obslugaKlikniecia;
+    private StoneType nastepnyKamien = StoneType.BLACK;
 
     public BoardView(Consumer<Field> obslugaKlikniecia) {
         this.obslugaKlikniecia = obslugaKlikniecia;
@@ -20,7 +21,13 @@ public class BoardView extends GridPane {
                 Field pole = new Field(wiersz, kolumna);
 
                 pole.setOnMouseClicked(e -> {
-                    pole.zaznacz();
+                    pole.ustawKamien(nastepnyKamien);
+
+                    nastepnyKamien =
+                        (nastepnyKamien == StoneType.BLACK)
+                            ? StoneType.WHITE
+                            : StoneType.BLACK;
+
                     obslugaKlikniecia.accept(pole);
                 });
 
