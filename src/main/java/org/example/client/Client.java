@@ -108,6 +108,22 @@ public class Client{
     public void ustawMojaTura(boolean wartosc) {
         mojatura = wartosc;
     }
+    public void pas() {
+        if (out == null) {
+            System.out.println("Brak połączenia – nie można spasować");
+            return;
+        }
+        out.println("PASS");
+    }
+
+    public void poddajSie() {
+        if (out == null) {
+            System.out.println("Brak połączenia – nie można się poddać");
+            return;
+        }
+        out.println("RESIGN");
+    }
+
 
 
 }

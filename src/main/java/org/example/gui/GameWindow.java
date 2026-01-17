@@ -7,6 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+
 public class GameWindow implements GameStateListener {
     @Override
     public void onBoardUpdate(char[][] planszaZSerwera) {
@@ -20,6 +23,9 @@ public class GameWindow implements GameStateListener {
     private BoardView plansza;
     private Client klient;
     private boolean mojaTura = false;
+    private Button przyciskPas;
+    private Button przyciskPoddaj;
+    private ScoreBoard panelWynikow;
 
 
     public void ustawKlienta(Client klient) {
@@ -29,6 +35,9 @@ public class GameWindow implements GameStateListener {
     public GameWindow() {
         korzen = new BorderPane();
         pasekStatusu = new Label("Wybierz rozmiar planszy");
+        panelWynikow = new ScoreBoard();
+        przyciskPas = new Button("Pas");
+        przyciskPoddaj = new Button("Poddaj się :(");
 
         inicjalizujUklad();
     }
@@ -60,6 +69,32 @@ public class GameWindow implements GameStateListener {
         korzen.setBottom(pasekStatusu);
 
         utworzNowaPlansze(19);
+        przyciskPas = new Button("Pas");
+        przyciskPoddaj = new Button("Poddaj się");
+
+        przyciskPas.setOnAction(e -> {
+            if (!mojaTura) {
+                pasekStatusu.setText("Nie możesz spasować, to nie Twoja tura");
+                return;
+            }
+            if (klient != null) {
+                klient.pas();
+                mojaTura = false;
+                pasekStatusu.setText("Wykonano pas - tura przeciwnika");
+            }
+        });
+
+        przyciskPoddaj.setOnAction(e -> {
+            if (klient != null) {
+                klient.poddajSie();
+                pasekStatusu.setText("Poddano grę");
+            }
+        });
+
+        VBox panelPrawy = new VBox(15, panelWynikow, przyciskPas, przyciskPoddaj);
+        panelPrawy.setStyle("-fx-padding: 10;");
+        korzen.setRight(panelPrawy);
+
     }
 
     private void utworzNowaPlansze(int rozmiar) {
