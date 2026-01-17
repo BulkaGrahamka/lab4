@@ -29,7 +29,7 @@ public class GameWindow implements GameStateListener {
     private boolean mojaTura = false;
     private Button przyciskPas;
     private Button przyciskPoddaj;
-    private ScoreBoard panelWynikow;
+    private ScoreBoard panelWynikow = ScoreBoard.getInstance();
 
 
     public void ustawKlienta(Client klient) {

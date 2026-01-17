@@ -1,6 +1,7 @@
 package org.example.server;
 
 import org.example.board.Board;
+import org.example.gui.ScoreBoard;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -81,6 +82,12 @@ public class ClientHandler implements Runnable {
                     continue;
                 }
                 int wynik = board.playMove(row, col, mojKolor);
+                if (mojKolor == 1) {
+                    ScoreBoard.getInstance().ustawPunktyCzarnego(wynik);
+                }
+                else if (mojKolor == 2) {
+                    ScoreBoard.getInstance().ustawPunktyBialego(wynik);
+                }
 
                 if (wynik >= 0){
                     poprzedniPas = false;
