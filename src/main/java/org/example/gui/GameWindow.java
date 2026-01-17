@@ -19,6 +19,8 @@ public class GameWindow implements GameStateListener {
     private final Label pasekStatusu;
     private BoardView plansza;
     private Client klient;
+    private boolean mojaTura = false;
+
 
     public void ustawKlienta(Client klient) {
         this.klient = klient;
@@ -61,17 +63,31 @@ public class GameWindow implements GameStateListener {
     }
 
     private void utworzNowaPlansze(int rozmiar) {
-        plansza = new BoardView(rozmiar, pole -> {
-            int wiersz = pole.getWiersz();
-            int kolumna = pole.getKolumna();
+    plansza = new BoardView(rozmiar, pole -> {
+        int wiersz = pole.getWiersz();
+        int kolumna = pole.getKolumna();
 
-            pasekStatusu.setText(
-                "wysłano ruch! (" + wiersz + ", " + kolumna + ")"
-            );
+        if (!mojaTura) {
+            pasekStatusu.setText("Czekaj na swoją turę");
+            return;
+        }
 
-            if (klient != null) {
+        if (klient != null) {
             klient.wyslijRuch(wiersz, kolumna);
-            }
-        });
-    }
+            mojaTura = false;
+            pasekStatusu.setText("Ruch wysłany, tura przeciwnika");
+        }
+    });
+
+    korzen.setCenter(plansza);
+}
+
+@Override
+public void onYourTurn() {
+    javafx.application.Platform.runLater(() -> {
+        mojaTura = true;
+        pasekStatusu.setText("Twoja tura");
+    });
+}
+
 }

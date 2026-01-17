@@ -39,6 +39,10 @@ public class Client{
                         if (msg.equals("TWOJ_RUCH")) {
                             mojatura = true;
                             System.out.println("Twój ruch:");
+                            if (sluchacz != null) {
+                                sluchacz.onYourTurn();
+                            }
+
                         }
                         else if (msg.equals("SERVER_PELNY")) {
                             System.out.println("Serwer jest pelny :( Rozłączono");
@@ -97,6 +101,14 @@ public class Client{
 
         out.println(wiersz + " " + kolumna);
     }
+    public boolean czyMojaTura() {
+        return mojatura;
+    }
+
+    public void ustawMojaTura(boolean wartosc) {
+        mojatura = wartosc;
+    }
+
 
 }
 
