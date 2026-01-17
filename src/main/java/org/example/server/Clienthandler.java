@@ -84,17 +84,19 @@ public class ClientHandler implements Runnable {
                 int wynik = board.playMove(row, col, mojKolor);
 
                 if (wynik >= 0){
+                    String wiadomoscOPunktach;
+                    if (mojKolor == 1){
+                        wiadomoscOPunktach = "PUNKTY CZARNY " + wynik;
+                    }
+                    else {
+                        wiadomoscOPunktach = "PUNKTY BIALY " + wynik;
+                    }
+                    wyslij(wiadomoscOPunktach);
+
                     poprzedniPas = false;
                     wyslij("PLANSZA");
                     for (String l : board.getBoardLines()) {
                         wyslij(l);
-                    }
-
-                    if (mojKolor == 1) {
-                        ScoreBoard.getInstance().dodajPunktyCzarnego(wynik);
-                    }
-                    else if (mojKolor == 2) {
-                        ScoreBoard.getInstance().dodajPunktyBialego(wynik);
                     }
 
                     if (przeciwnik != null) {

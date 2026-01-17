@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import javafx.application.Platform;
 
 import org.example.gui.GameStateListener;
+import org.example.gui.ScoreBoard;
 
 public class Client{
     private GameStateListener sluchacz;
@@ -79,6 +81,19 @@ public class Client{
                             if (sluchacz != null) {
                                 sluchacz.onOpponentPass();
                             }
+                        }
+                        else if (msg.startsWith("PUNKTY")) {
+                            String[] czesci = msg.split(" ");
+                            String kolor = czesci[1];
+                            int punkty = Integer.parseInt(czesci[2]);
+
+                            Platform.runLater(() -> {
+                               if (kolor.equals("CZARNY")) {
+                                   ScoreBoard.getInstance().dodajPunktyCzarnego(punkty);
+                               } else if (kolor.equals("BIALY")) {
+                                   ScoreBoard.getInstance().dodajPunktyBialego(punkty);
+                               }
+                            });
                         }
 
                     }
