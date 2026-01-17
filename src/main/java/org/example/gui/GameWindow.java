@@ -146,6 +146,13 @@ public class GameWindow implements GameStateListener {
             pasekStatusu.setText(komunikat);
         });
     }
+    @Override
+    public void onOpponentPass() {
+        Platform.runLater(() -> {
+            pasekStatusu.setText("Przeciwnik spasował, jest toja tura");
+        });
+    }
+
 
     public Parent getKorzen() {
         return korzen;

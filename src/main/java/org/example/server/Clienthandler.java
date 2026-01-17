@@ -48,6 +48,7 @@ public class ClientHandler implements Runnable {
                         poprzedniPas = true;
                         if (przeciwnik != null) {
                             przeciwnik.wyslij("TWOJ_RUCH");
+                            przeciwnik.wyslij("PRZECIWNIK_PAS");
                         }
                         continue;
                     }

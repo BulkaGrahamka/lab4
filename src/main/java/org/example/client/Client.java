@@ -75,6 +75,12 @@ public class Client{
                         if (sluchacz != null) {
                             sluchacz.onGameEnd("Przegrałeś");
                         }
+                        else if (msg.equals("PRZECIWNIK_PAS")) {
+                            if (sluchacz != null) {
+                                sluchacz.onOpponentPass();
+                            }
+                        }
+
                     }
 
 
