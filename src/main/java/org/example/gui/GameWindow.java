@@ -1,5 +1,7 @@
 package org.example.gui;
 
+import org.example.client.Client;
+
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -16,6 +18,11 @@ public class GameWindow implements GameStateListener {
     private final BorderPane korzen;
     private final Label pasekStatusu;
     private BoardView plansza;
+    private Client klient;
+
+    public void ustawKlienta(Client klient) {
+        this.klient = klient;
+    } 
 
     public GameWindow() {
         korzen = new BorderPane();
@@ -55,17 +62,16 @@ public class GameWindow implements GameStateListener {
 
     private void utworzNowaPlansze(int rozmiar) {
         plansza = new BoardView(rozmiar, pole -> {
+            int wiersz = pole.getWiersz();
+            int kolumna = pole.getKolumna();
+
             pasekStatusu.setText(
-                "Kliknięto pole: (" +
-                pole.getWiersz() + ", " +
-                pole.getKolumna() + ")"
+                "wysłano ruch! (" + wiersz + ", " + kolumna + ")"
             );
+
+            if (klient != null) {
+            klient.wyslijRuch(wiersz, kolumna);
+            }
         });
-
-        korzen.setCenter(plansza);
-    }
-
-    public Parent getKorzen() {
-        return korzen;
     }
 }

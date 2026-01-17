@@ -12,6 +12,7 @@ public class GoApp extends Application {
     public void start(Stage oknoGlowne) {
         GameWindow oknoGry = new GameWindow();
         Client klient = new Client();
+        oknoGry.ustawKlienta(klient);
         klient.ustawGameStateListener(oknoGry);
         klient.polaczzserwerem("localhost", 6767);
 

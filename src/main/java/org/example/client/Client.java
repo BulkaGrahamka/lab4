@@ -10,7 +10,9 @@ import org.example.gui.GameStateListener;
 public class Client{
     private GameStateListener sluchacz;
     private Socket socket;
+    private PrintWriter out;
     private volatile boolean mojatura=false;
+
     public static void main(String[] args){
         Client klient = new Client();
         klient.polaczzserwerem("localhost", 6767);
@@ -28,7 +30,7 @@ public class Client{
             BufferedReader in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream())
             );
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out = new PrintWriter(socket.getOutputStream(), true);
             Thread odbior = new Thread(() -> {
                 try{
                     String msg;
@@ -58,15 +60,15 @@ public class Client{
                                 sluchacz.onBoardUpdate(plansza);
                             }
                         }
-                             
+
                     }
                 }catch (IOException e){
                     System.out.println("rozłączono z serwerem");
-  
+
                 }
             });
             odbior.start();
-            
+
             BufferedReader console = new BufferedReader(
                 new InputStreamReader(System.in)
                 );
@@ -75,19 +77,29 @@ public class Client{
             while ((linia = console.readLine()) != null) {
                 if (mojatura) {
                     out.println(linia);
-                    mojatura = false; 
+                    mojatura = false;
                 } else {
                 System.out.println("czekaj na swoją kolej...");
                 }
-            
+
             }
 
         } catch (IOException e){
             System.out.println("błąd połączenia: " + e.getMessage());
         }
-            
+
     }
+    public void wyslijRuch(int wiersz, int kolumna) {
+        if (socket == null || socket.isClosed()) {
+            System.out.println("błąd połączenia z serwerem – ruch niewysłany");
+            return;
+        }
+
+        out.println(wiersz + " " + kolumna);
+    }
+
 }
+
 
             
 
