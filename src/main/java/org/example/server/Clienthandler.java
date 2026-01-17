@@ -14,6 +14,8 @@ public class ClientHandler implements Runnable {
     private final Board board;        
     private final int mojKolor;
     private ClientHandler przeciwnik;
+    private boolean poprzedniPas = false;
+
 
     public ClientHandler(Socket socket, Board board, int mojKolor) throws IOException {
         this.socket = socket;
@@ -35,6 +37,29 @@ public class ClientHandler implements Runnable {
         try {
             String linia;
             while ((linia = in.readLine()) != null) {
+                if (linia.equals("PASS")) {
+                    if (poprzedniPas) {
+                        wyslij("KONIEC_GRY");
+                        if (przeciwnik != null) {
+                        przeciwnik.wyslij("KONIEC_GRY");
+                        }
+                        break;
+                    } else {
+                        poprzedniPas = true;
+                        if (przeciwnik != null) {
+                            przeciwnik.wyslij("TWOJ_RUCH");
+                        }
+                        continue;
+                    }
+                }  
+
+                if (linia.equals("RESIGN")) {
+                    wyslij("PRZEGRALES");
+                    if (przeciwnik != null) {
+                        przeciwnik.wyslij("WYGRANA");
+                    }
+                    break; 
+                }
                 System.out.println("[OD KLIENTA " + socket.getInetAddress() + "] " + linia);
 
                 String[] parts = linia.trim().split("\\s+");
@@ -57,7 +82,7 @@ public class ClientHandler implements Runnable {
                 int wynik = board.playMove(row, col, mojKolor);
 
                 if (wynik >= 0){
-
+                    poprzedniPas = false;
                     wyslij("PLANSZA");
                     for (String l : board.getBoardLines()) {
                         wyslij(l);

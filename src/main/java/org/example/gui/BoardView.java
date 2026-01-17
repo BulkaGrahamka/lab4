@@ -20,7 +20,7 @@ public class BoardView extends GridPane {
         for (int wiersz = 0; wiersz < dane.length; wiersz++) {
             for (int kol=0; kol < dane[wiersz].length; kol++) {
                 Field pole = new Field(wiersz, kol);
-
+                pole.setOnMouseClicked(e -> obslugaKlikniecia.accept(pole));
                 if (dane[wiersz][kol] == 'C') {
                     pole.ustawKamien(StoneType.BLACK);
                 } else if (dane[wiersz][kol] =='B') {

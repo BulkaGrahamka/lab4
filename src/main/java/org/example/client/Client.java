@@ -37,6 +37,8 @@ public class Client{
 
                     while ((msg = in.readLine()) != null) {
                         if (msg.equals("TWOJ_RUCH")) {
+                            System.out.println("DEBUG: odebrano TWOJ_RUCH, sluchacz=" + (sluchacz != null));
+
                             mojatura = true;
                             System.out.println("Twój ruch:");
                             if (sluchacz != null) {
@@ -64,6 +66,17 @@ public class Client{
                                 sluchacz.onBoardUpdate(plansza);
                             }
                         }
+                        else if (msg.equals("WYGRANA")) {
+                            if (sluchacz != null) {
+                                sluchacz.onGameEnd("Wygrałeś!");
+                            }
+                        }
+                        else if (msg.equals("PRZEGRALES")) {
+                        if (sluchacz != null) {
+                            sluchacz.onGameEnd("Przegrałeś");
+                        }
+                    }
+
 
                     }
                 }catch (IOException e){
@@ -73,20 +86,19 @@ public class Client{
             });
             odbior.start();
 
-            BufferedReader console = new BufferedReader(
-                new InputStreamReader(System.in)
-                );
+            //BufferedReader console = new BufferedReader(
+            //    new InputStreamReader(System.in)
+            //    );
 
-            String linia;
-            while ((linia = console.readLine()) != null) {
-                if (mojatura) {
-                    out.println(linia);
-                    mojatura = false;
-                } else {
-                System.out.println("czekaj na swoją kolej...");
-                }
-
-            }
+            //String linia;
+            //while ((linia = console.readLine()) != null) {
+            //   if (mojatura) {
+            //        out.println(linia);
+            //        mojatura = false;
+            //    } else {
+            //    System.out.println("czekaj na swoją kolej...");
+            //    }
+            //}
 
         } catch (IOException e){
             System.out.println("błąd połączenia: " + e.getMessage());

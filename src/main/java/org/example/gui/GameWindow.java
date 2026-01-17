@@ -9,6 +9,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+
+
 
 public class GameWindow implements GameStateListener {
     @Override
@@ -43,26 +47,28 @@ public class GameWindow implements GameStateListener {
     }
 
     private void inicjalizujUklad() {
-        ComboBox<String> wyborRozmiaru = new ComboBox<>();
-        wyborRozmiaru.getItems().addAll("19x19 (domyśln)", "13x13", "9x9");
-        wyborRozmiaru.setValue("19x19 (domyśln)");
+        //ComboBox<String> wyborRozmiaru = new ComboBox<>();
+        //wyborRozmiaru.getItems().addAll("19x19 (domyśln)", "13x13", "9x9");
+        //wyborRozmiaru.setValue("19x19 (domyśln)");
 
-        wyborRozmiaru.setOnAction(e -> {
-            String wybor = wyborRozmiaru.getValue();
+        //wyborRozmiaru.setOnAction(e -> {
+            //String wybor = wyborRozmiaru.getValue();
 
-            int rozmiar;
-            if (wybor.startsWith("9")) {
-                rozmiar = 9;
-            } else if (wybor.startsWith("13")) {
-                rozmiar = 13;
-            } else {
-                rozmiar = 19;
-            }
-            utworzNowaPlansze(rozmiar);
-            pasekStatusu.setText("Rozmiar planszy: " + rozmiar + "×" + rozmiar);
-        });
+            //int rozmiar;
+            //if (wybor.startsWith("9")) {
+                //rozmiar = 9;
+            //} else if (wybor.startsWith("13")) {
+                //rozmiar = 13;
+            //} else {
+                //rozmiar = 19;
+            //}
+            //utworzNowaPlansze(rozmiar);
+            //pasekStatusu.setText("Rozmiar planszy: " + rozmiar + "×" + rozmiar);
+        //});
 
-        HBox gornyPanel = new HBox(10, new Label("Rozmiar planszy:"), wyborRozmiaru);
+        //HBox gornyPanel = new HBox(10, new Label("Rozmiar planszy:"), wyborRozmiaru);
+        HBox gornyPanel = new HBox(10, new Label("Plansza 19x19"));
+
         gornyPanel.setStyle("-fx-padding: 10;");
 
         korzen.setTop(gornyPanel);
@@ -115,14 +121,34 @@ public class GameWindow implements GameStateListener {
     });
 
     korzen.setCenter(plansza);
+    }
+
+    @Override
+    public void onYourTurn() {
+        System.out.println("DEBUG: onYourTurn() w GUI");
+        javafx.application.Platform.runLater(() -> {
+            mojaTura = true;
+            pasekStatusu.setText("Twoja tura");
+        });
+    }
+    @Override
+    public void onGameEnd(String komunikat) {
+        Platform.runLater(() -> {
+            mojaTura = false;
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Koniec gry");
+            alert.setHeaderText(null);
+            alert.setContentText(komunikat);
+
+            alert.showAndWait();
+
+            pasekStatusu.setText(komunikat);
+        });
+    }
+
+    public Parent getKorzen() {
+        return korzen;
+    }
 }
 
-@Override
-public void onYourTurn() {
-    javafx.application.Platform.runLater(() -> {
-        mojaTura = true;
-        pasekStatusu.setText("Twoja tura");
-    });
-}
-
-}
