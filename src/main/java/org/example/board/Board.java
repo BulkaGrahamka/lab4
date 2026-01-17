@@ -5,7 +5,7 @@ import java.util.*;
 public class Board {
     private final int size;
     private final int[][] grid;
-    private final int[][] dirs = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+    private final int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     public Board(int size) {
         this.size = size;
@@ -48,9 +48,32 @@ public class Board {
         if (grid[row][col] == 0) return 0;
 
         int removed = 0;
-        if (grid[row][col] == player) {
-            grid[row][col] = 0;
+        Stack<int[]> stack = new Stack<>();
+        stack.push(new int[]{row, col});
+        grid[row][col] = -player; //onnaczenie pole zeby nie liczyc go ponownie
+
+        while (!stack.isEmpty()) {
+            int[] pop = stack.pop();
+            int pRow = pop[0];
+            int pCol = pop[1];
             removed++;
+            for (int[] dir : dirs) {
+                int nRow = pRow + dir[0];
+                int nCol = pCol + dir[1];
+                if (!inBounds(nRow, nCol)) continue;
+                if (grid[nRow][nCol] == player) {
+                    stack.push(new int[]{nRow, nCol});
+                    grid[nRow][nCol] = -player;
+                }
+            }
+        }
+
+        for (int i = 0; i < size; i++) {
+            for  (int j = 0; j < size; j++) {
+                if (grid[i][j] == -player) {
+                    grid[i][j] = 0;
+                }
+            }
         }
 
         return removed;
@@ -61,12 +84,25 @@ public class Board {
         int color = boardCopy[row][col];
         if (color == 0) return true;
 
-        for (int[] dir : dirs) {
-            int nRow = row + dir[0];
-            int nCol = col + dir[1];
-            if (!inBounds(nRow, nCol)) continue;
-            if (boardCopy[nRow][nCol] == 0) {
-                return true;
+        boolean[][] visited = new boolean[size][size];
+
+        Stack <int[]> stack = new Stack<>();
+        stack.push(new int[]{row, col});
+        visited[row][col] = true;
+
+        while (!stack.isEmpty()) {
+            int[] pop = stack.pop();
+            int pRow = pop[0];
+            int pCol = pop[1];
+            for  (int[] dir : dirs) {
+                int nRow = pRow + dir[0];
+                int nCol = pCol + dir[1];
+                if (!inBounds(nRow, nCol)) continue;
+                if (boardCopy[nRow][nCol] == 0) return true;
+                if (!visited[nRow][nCol] && boardCopy[nRow][nCol] == color) {
+                    visited[nRow][nCol] = true;
+                    stack.push(new int[]{nRow, nCol});
+                }
             }
         }
         return false;
@@ -95,10 +131,4 @@ public class Board {
         }
         return lines;
     }
-<<<<<<< HEAD
 }
-
-
-=======
-}
->>>>>>> 1ff4436b9ad1354c861069e3fc577c876a4d012b
