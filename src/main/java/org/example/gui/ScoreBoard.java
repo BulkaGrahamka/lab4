@@ -30,12 +30,12 @@ public class ScoreBoard extends VBox {
         getChildren().addAll(tytul, punktyCzarnyLabel, punktyBialyLabel);
     }
 
-    public void ustawPunktyCzarnego(int punkty) {
+    public void dodajPunktyCzarnego(int punkty) {
         this.punktyCzarny += punkty;
         punktyCzarnyLabel.setText("Czarny: " + this.punktyCzarny + " pkt");
     }
 
-    public void ustawPunktyBialego(int punkty) {
+    public void dodajPunktyBialego(int punkty) {
         this.punktyBialy += punkty;
         punktyBialyLabel.setText("Biały: " + this.punktyBialy + " pkt");
     }
