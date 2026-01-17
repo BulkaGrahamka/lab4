@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+
 public class ClientHandler implements Runnable {
     private final Socket socket;
     private final BufferedReader in;
@@ -15,6 +16,9 @@ public class ClientHandler implements Runnable {
     private final int mojKolor;
     private ClientHandler przeciwnik;
     private boolean poprzedniPas = false;
+    private static int aktualnyGracz = 1;
+    private static int kolejnePasy = 0;
+
 
 
     public ClientHandler(Socket socket, Board board, int mojKolor) throws IOException {
@@ -38,20 +42,32 @@ public class ClientHandler implements Runnable {
             String linia;
             while ((linia = in.readLine()) != null) {
                 if (linia.equals("PASS")) {
-                    if (poprzedniPas) {
-                        wyslij("KONIEC_GRY");
-                        if (przeciwnik != null) {
-                        przeciwnik.wyslij("KONIEC_GRY");
-                        }
-                        break;
-                    } else {
-                        poprzedniPas = true;
-                        if (przeciwnik != null) {
-                            przeciwnik.wyslij("TWOJ_RUCH");
-                        }
+
+                    if (mojKolor != aktualnyGracz) {
+                        wyslij("NIE_TWOJA_TURA");
                         continue;
                     }
-                }  
+
+                    kolejnePasy++;
+
+                    if (kolejnePasy == 2) {
+                        wyslij("KONIEC_GRY");
+                        if (przeciwnik != null) {
+                            przeciwnik.wyslij("KONIEC_GRY");
+                        }
+                        break;
+                    }
+
+                    aktualnyGracz = (aktualnyGracz == 1) ? 2 : 1;
+
+                    if (przeciwnik != null) {
+                        przeciwnik.wyslij("PRZECIWNIK_PAS");
+                        przeciwnik.wyslij("TWOJ_RUCH");
+                    }
+
+                    continue;
+                }
+
 
                 if (linia.equals("RESIGN")) {
                     wyslij("PRZEGRALES");
@@ -82,7 +98,8 @@ public class ClientHandler implements Runnable {
                 int wynik = board.playMove(row, col, mojKolor);
 
                 if (wynik >= 0){
-                    poprzedniPas = false;
+                    kolejnePasy = 0;
+                    aktualnyGracz = (aktualnyGracz == 1) ? 2 : 1;
                     wyslij("PLANSZA");
                     for (String l : board.getBoardLines()) {
                         wyslij(l);
