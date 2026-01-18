@@ -13,7 +13,15 @@ import java.util.*;
 public class Board {
     private final int size;
     private final int[][] grid;
+    private final int[][] tempGrid;
+
     private final int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+    /**
+     * Przechowuje pozycję pola, na którym zabroniony jest ruch w następnej turze
+     * z powodu reguły Ko. Wartość jest resetowana do null po każdym ruchu.
+     */
+    private int[] koPosition = null;
 
     /**
      * Tworzy nową, pustą planszę o zadanym rozmiarze.
@@ -23,6 +31,7 @@ public class Board {
     public Board(int size) {
         this.size = size;
         grid = new int[size][size];
+        tempGrid = new int[size][];
         for (int i = 0; i < size; i++) {
             Arrays.fill(grid[i], 0);
         }
@@ -40,31 +49,49 @@ public class Board {
      * @return Liczba zbitych kamieni przeciwnika (>= 0) w przypadku poprawnego ruchu.
      *         -1, jeśli pole jest zajęte lub poza planszą.
      *         -2, jeśli ruch jest ruchem samobójczym.
+     *         -3, jeśli narusza regułę Ko
      */
     public synchronized int playMove(int row, int col, int player) {
         if (!inBounds(row, col) || grid[row][col] != 0) return -1;
+        if (koPosition != null && row  == koPosition[0] && col == koPosition[1]) {
+            return -3;
+        }
 
+        for (int i = 0; i < size; i++) {
+            tempGrid[i] = Arrays.copyOf(grid[i], size);
+        }
+        tempGrid[row][col] = player;
         int enemy = (player == 1) ? 2 : 1;
-        grid[row][col] = player;
         int captured = 0;
+        int[] lastCaptured = null;
+
         // Sprawdzenie i zbicie grup przeciwnika
         for (int[] dir : dirs) {
             int nRow = row + dir[0];
             int nCol = col + dir[1];
-            if (!inBounds(nRow, nCol)) continue;
-            if (grid[nRow][nCol] == enemy) {
-                if (!hasLiberties(nRow, nCol, grid)) {
+            if (inBounds(nRow, nCol) && tempGrid[nRow][nCol] == enemy) {
+                if (!hasLiberties(nRow, nCol, tempGrid)) {
+                    lastCaptured = new int[]{nRow, nCol};
                     captured += removeGroup(nRow, nCol, enemy);
                 }
             }
         }
 
         // Weryfikacja ruchu samobójczego
-        if (!hasLiberties(row, col, grid)) {
+        if (!hasLiberties(row, col, tempGrid)) {
             if (captured == 0) { // Tylko jeśli ruch nie prowadzi do zbicia
-                grid[row][col] = 0; // Wycofaj ruch
                 return -2;
             }
+        }
+
+        for (int i = 0; i < size; i++) {
+            System.arraycopy(tempGrid[i], 0, grid[i], 0, size);
+        }
+
+        if (captured == 1) {
+            koPosition = lastCaptured;
+        } else {
+            koPosition = null;
         }
         return captured;
     }
@@ -79,13 +106,13 @@ public class Board {
      * @return Liczba usuniętych kamieni.
      */
     private int removeGroup(int row, int col, int player) {
-        if (!inBounds(row, col) || grid[row][col] != player) return 0;
+        if (!inBounds(row, col) || tempGrid[row][col] != player) return 0;
 
         int removed = 0;
         Stack<int[]> stack = new Stack<>();
         stack.push(new int[]{row, col});
         // Tymczasowe oznaczenie, aby uniknąć ponownego dodawania na stos
-        grid[row][col] = -player;
+        tempGrid[row][col] = -player;
 
         while (!stack.isEmpty()) {
             int[] pop = stack.pop();
@@ -95,9 +122,9 @@ public class Board {
             for (int[] dir : dirs) {
                 int nRow = pRow + dir[0];
                 int nCol = pCol + dir[1];
-                if (inBounds(nRow, nCol) && grid[nRow][nCol] == player) {
+                if (inBounds(nRow, nCol) && tempGrid[nRow][nCol] == player) {
                     stack.push(new int[]{nRow, nCol});
-                    grid[nRow][nCol] = -player;
+                    tempGrid[nRow][nCol] = -player;
                 }
             }
         }
@@ -106,8 +133,8 @@ public class Board {
         // Można by to zoptymalizować, zmieniając na 0 w pętli while.
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (grid[i][j] == -player) {
-                    grid[i][j] = 0;
+                if (tempGrid[i][j] == -player) {
+                    tempGrid[i][j] = 0;
                     removed++; // Zlicz usunięty kamień
                 }
             }
