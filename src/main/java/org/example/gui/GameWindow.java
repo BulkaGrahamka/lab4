@@ -29,12 +29,12 @@ public class GameWindow implements GameStateListener {
     private boolean mojaTura = false;
     private Button przyciskPas;
     private Button przyciskPoddaj;
-    private ScoreBoard panelWynikow = ScoreBoard.getInstance();
+    private final ScoreBoard panelWynikow;
 
 
     public void ustawKlienta(Client klient) {
         this.klient = klient;
-    } 
+    }
 
     public GameWindow() {
         korzen = new BorderPane();
@@ -52,18 +52,18 @@ public class GameWindow implements GameStateListener {
         //wyborRozmiaru.setValue("19x19 (domyśln)");
 
         //wyborRozmiaru.setOnAction(e -> {
-            //String wybor = wyborRozmiaru.getValue();
+        //String wybor = wyborRozmiaru.getValue();
 
-            //int rozmiar;
-            //if (wybor.startsWith("9")) {
-                //rozmiar = 9;
-            //} else if (wybor.startsWith("13")) {
-                //rozmiar = 13;
-            //} else {
-                //rozmiar = 19;
-            //}
-            //utworzNowaPlansze(rozmiar);
-            //pasekStatusu.setText("Rozmiar planszy: " + rozmiar + "×" + rozmiar);
+        //int rozmiar;
+        //if (wybor.startsWith("9")) {
+        //rozmiar = 9;
+        //} else if (wybor.startsWith("13")) {
+        //rozmiar = 13;
+        //} else {
+        //rozmiar = 19;
+        //}
+        //utworzNowaPlansze(rozmiar);
+        //pasekStatusu.setText("Rozmiar planszy: " + rozmiar + "×" + rozmiar);
         //});
 
         //HBox gornyPanel = new HBox(10, new Label("Rozmiar planszy:"), wyborRozmiaru);
@@ -104,23 +104,23 @@ public class GameWindow implements GameStateListener {
     }
 
     private void utworzNowaPlansze(int rozmiar) {
-    plansza = new BoardView(rozmiar, pole -> {
-        int wiersz = pole.getWiersz();
-        int kolumna = pole.getKolumna();
+        plansza = new BoardView(rozmiar, pole -> {
+            int wiersz = pole.getWiersz();
+            int kolumna = pole.getKolumna();
 
-        if (!mojaTura) {
-            pasekStatusu.setText("Czekaj na swoją turę");
-            return;
-        }
+            if (!mojaTura) {
+                pasekStatusu.setText("Czekaj na swoją turę");
+                return;
+            }
 
-        if (klient != null) {
-            klient.wyslijRuch(wiersz, kolumna);
-            mojaTura = false;
-            pasekStatusu.setText("Ruch wysłany, tura przeciwnika");
-        }
-    });
+            if (klient != null) {
+                klient.wyslijRuch(wiersz, kolumna);
+                mojaTura = false;
+                pasekStatusu.setText("Ruch wysłany, tura przeciwnika");
+            }
+        });
 
-    korzen.setCenter(plansza);
+        korzen.setCenter(plansza);
     }
 
     @Override
@@ -146,16 +146,21 @@ public class GameWindow implements GameStateListener {
             pasekStatusu.setText(komunikat);
         });
     }
-    @Override
-    public void onOpponentPass() {
-        Platform.runLater(() -> {
-            pasekStatusu.setText("Przeciwnik spasował, jest toja tura");
-        });
-    }
-
 
     public Parent getKorzen() {
         return korzen;
     }
+
+    public void onScoreUpdate(String kolor, int punkty) {
+        Platform.runLater(() -> {
+            if (kolor.equals("CZARNY")) {
+                panelWynikow.dodajPunktyCzarnego(punkty);
+            }
+            else if (kolor.equals("BIALY")) {
+                panelWynikow.dodajPunktyBialego(punkty);
+            }
+        });
+    }
+
 }
 

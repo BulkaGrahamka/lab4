@@ -1,21 +1,24 @@
 package org.example.server;
 
 import org.example.board.Board;
-import org.example.gui.ScoreBoard;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+
 public class ClientHandler implements Runnable {
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
-    private final Board board;        
+    private final Board board;
     private final int mojKolor;
     private ClientHandler przeciwnik;
     private boolean poprzedniPas = false;
+    private static int aktualnyGracz = 1;
+    private static int kolejnePasy = 0;
+
 
 
     public ClientHandler(Socket socket, Board board, int mojKolor) throws IOException {
@@ -30,8 +33,8 @@ public class ClientHandler implements Runnable {
         out.println(wiadomosc);
     }
     public void ustawprzeciwnika(ClientHandler przeciwnik) {
-    this.przeciwnik = przeciwnik;
-}
+        this.przeciwnik = przeciwnik;
+    }
 
     @Override
     public void run() {
@@ -39,28 +42,39 @@ public class ClientHandler implements Runnable {
             String linia;
             while ((linia = in.readLine()) != null) {
                 if (linia.equals("PASS")) {
-                    if (poprzedniPas) {
-                        wyslij("KONIEC_GRY");
-                        if (przeciwnik != null) {
-                        przeciwnik.wyslij("KONIEC_GRY");
-                        }
-                        break;
-                    } else {
-                        poprzedniPas = true;
-                        if (przeciwnik != null) {
-                            przeciwnik.wyslij("TWOJ_RUCH");
-                            przeciwnik.wyslij("PRZECIWNIK_PAS");
-                        }
+
+                    if (mojKolor != aktualnyGracz) {
+                        wyslij("NIE_TWOJA_TURA");
                         continue;
                     }
-                }  
+
+                    kolejnePasy++;
+
+                    if (kolejnePasy == 2) {
+                        wyslij("KONIEC_GRY");
+                        if (przeciwnik != null) {
+                            przeciwnik.wyslij("KONIEC_GRY");
+                        }
+                        break;
+                    }
+
+                    aktualnyGracz = (aktualnyGracz == 1) ? 2 : 1;
+
+                    if (przeciwnik != null) {
+                        przeciwnik.wyslij("PRZECIWNIK_PAS");
+                        przeciwnik.wyslij("TWOJ_RUCH");
+                    }
+
+                    continue;
+                }
+
 
                 if (linia.equals("RESIGN")) {
                     wyslij("PRZEGRALES");
                     if (przeciwnik != null) {
                         przeciwnik.wyslij("WYGRANA");
                     }
-                    break; 
+                    break;
                 }
                 System.out.println("[OD KLIENTA " + socket.getInetAddress() + "] " + linia);
 
@@ -84,16 +98,21 @@ public class ClientHandler implements Runnable {
                 int wynik = board.playMove(row, col, mojKolor);
 
                 if (wynik >= 0){
-                    String wiadomoscOPunktach;
-                    if (mojKolor == 1){
-                        wiadomoscOPunktach = "PUNKTY CZARNY " + wynik;
+                    kolejnePasy = 0;
+                    String wiadomosc;
+                    if (this.mojKolor == 1) {
+                        wiadomosc = "PUNKTY CZARNY " + wynik;
                     }
                     else {
-                        wiadomoscOPunktach = "PUNKTY BIALY " + wynik;
+                        wiadomosc = "PUNKTY BIALY " + wynik;
                     }
-                    wyslij(wiadomoscOPunktach);
 
-                    poprzedniPas = false;
+                    this.wyslij(wiadomosc);
+                    if (przeciwnik != null) {
+                        przeciwnik.wyslij(wiadomosc);
+                    }
+
+                    aktualnyGracz = (aktualnyGracz == 1) ? 2 : 1;
                     wyslij("PLANSZA");
                     for (String l : board.getBoardLines()) {
                         wyslij(l);

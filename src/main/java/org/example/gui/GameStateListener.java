@@ -5,8 +5,7 @@ public interface GameStateListener {
     void onBoardUpdate(char[][] plansza);
     void onYourTurn();
     void onGameEnd(String komunikat);
-    void onOpponentPass();
-
+    void onScoreUpdate(String kolor, int punkty);
 }
 
 

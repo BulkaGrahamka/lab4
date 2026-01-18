@@ -23,8 +23,8 @@ public class GoApp extends Application {
         new Thread(() -> {
             Client klient = new Client();
             klient.ustawGameStateListener(okno);
-            klient.polaczzserwerem("localhost", 6767);
             okno.ustawKlienta(klient);
+            klient.polaczzserwerem("localhost", 6767);
         }).start();
     }
 

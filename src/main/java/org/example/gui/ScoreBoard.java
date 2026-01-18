@@ -5,13 +5,10 @@ import javafx.scene.layout.VBox;
 
 public class ScoreBoard extends VBox {
 
-    private static final ScoreBoard INSTANCE = new ScoreBoard();
-
-    private final Label punktyCzarnyLabel;
-    private final Label punktyBialyLabel;
-    private int punktyCzarny = 0;
-    private int punktyBialy = 0;
-
+    private final Label punktyCzarny;
+    private final Label punktyBialy;
+    private int punktyCzarnego;
+    private int punktyBialego;
 
     public ScoreBoard() {
         setSpacing(10);
@@ -24,24 +21,20 @@ public class ScoreBoard extends VBox {
         Label tytul = new Label("Wyniki");
         tytul.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
 
-        punktyCzarnyLabel = new Label("Czarny: 0 pkt");
-        punktyBialyLabel = new Label("Biały: 0 pkt");
+        punktyCzarny = new Label("Czarny: 0 pkt");
+        punktyBialy = new Label("Biały: 0 pkt");
 
-        getChildren().addAll(tytul, punktyCzarnyLabel, punktyBialyLabel);
+        getChildren().addAll(tytul, punktyCzarny, punktyBialy);
     }
 
     public void dodajPunktyCzarnego(int punkty) {
-        this.punktyCzarny += punkty;
-        punktyCzarnyLabel.setText("Czarny: " + this.punktyCzarny + " pkt");
+        punktyCzarnego += punkty;
+        punktyCzarny.setText("Czarny: " + punktyCzarnego + " pkt");
     }
 
     public void dodajPunktyBialego(int punkty) {
-        this.punktyBialy += punkty;
-        punktyBialyLabel.setText("Biały: " + this.punktyBialy + " pkt");
-    }
-
-    public static ScoreBoard getInstance() {
-        return INSTANCE;
+        punktyBialego += punkty;
+        punktyBialy.setText("Biały: " + punktyBialego + " pkt");
     }
 }
 

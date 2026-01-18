@@ -56,7 +56,6 @@ public class Board {
             int[] pop = stack.pop();
             int pRow = pop[0];
             int pCol = pop[1];
-            removed++;
             for (int[] dir : dirs) {
                 int nRow = pRow + dir[0];
                 int nCol = pCol + dir[1];
@@ -69,9 +68,10 @@ public class Board {
         }
 
         for (int i = 0; i < size; i++) {
-            for  (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++) {
                 if (grid[i][j] == -player) {
                     grid[i][j] = 0;
+                    removed++;
                 }
             }
         }

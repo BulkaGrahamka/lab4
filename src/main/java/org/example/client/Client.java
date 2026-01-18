@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import javafx.application.Platform;
 
 import org.example.gui.GameStateListener;
 import org.example.gui.ScoreBoard;
@@ -15,11 +14,11 @@ public class Client{
     private PrintWriter out;
     private volatile boolean mojatura=false;
 
-    public static void main(String[] args){
-        Client klient = new Client();
-        klient.polaczzserwerem("localhost", 6767);
-
-    }
+    //    public static void main(String[] args){
+//        Client klient = new Client();
+//        klient.polaczzserwerem("localhost", 6767);
+//
+//    }
     public void ustawGameStateListener(GameStateListener sluchacz) {
         this.sluchacz = sluchacz;
     }
@@ -30,7 +29,7 @@ public class Client{
             socket=new Socket(host, port);
             System.out.println("połączono z serwerem :)");
             BufferedReader in = new BufferedReader(
-                new InputStreamReader(socket.getInputStream())
+                    new InputStreamReader(socket.getInputStream())
             );
             out = new PrintWriter(socket.getOutputStream(), true);
             Thread odbior = new Thread(() -> {
@@ -74,31 +73,19 @@ public class Client{
                             }
                         }
                         else if (msg.equals("PRZEGRALES")) {
-                        if (sluchacz != null) {
-                            sluchacz.onGameEnd("Przegrałeś");
-                        }
-                        else if (msg.equals("PRZECIWNIK_PAS")) {
                             if (sluchacz != null) {
-                                sluchacz.onOpponentPass();
+                                sluchacz.onGameEnd("Przegrałeś");
                             }
                         }
-                        else if (msg.startsWith("PUNKTY")) {
+                        else if (msg.startsWith("PUNKTY")) { //np PUNKTY BIALY 2
                             String[] czesci = msg.split(" ");
                             String kolor = czesci[1];
                             int punkty = Integer.parseInt(czesci[2]);
 
-                            Platform.runLater(() -> {
-                               if (kolor.equals("CZARNY")) {
-                                   ScoreBoard.getInstance().dodajPunktyCzarnego(punkty);
-                               } else if (kolor.equals("BIALY")) {
-                                   ScoreBoard.getInstance().dodajPunktyBialego(punkty);
-                               }
-                            });
+                            if (sluchacz != null) {
+                                sluchacz.onScoreUpdate(kolor, punkty);
+                            }
                         }
-
-                    }
-
-
                     }
                 }catch (IOException e){
                     System.out.println("rozłączono z serwerem");
