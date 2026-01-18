@@ -18,6 +18,9 @@ public class ClientHandler implements Runnable {
     private boolean poprzedniPas = false;
     private static int aktualnyGracz = 1;
     private static int kolejnePasy = 0;
+    private static int punktyCzarnego = 0;
+    private static int punktyBialego = 0;
+
 
 
 
@@ -53,7 +56,40 @@ public class ClientHandler implements Runnable {
                     if (kolejnePasy == 2) {
                         wyslij("KONIEC_GRY");
                         if (przeciwnik != null) {
-                            przeciwnik.wyslij("KONIEC_GRY");
+                            if (punktyCzarnego > punktyBialego) {
+                                if (mojKolor == 1) {
+                                    wyslij("WYGRANA");
+                                    if (przeciwnik != null){
+                                        przeciwnik.wyslij("PRZEGRALES");  
+                                    } 
+                                } else {
+                                    wyslij("PRZEGRALES");
+                                    if (przeciwnik != null) {
+                                        przeciwnik.wyslij("WYGRANA");
+                                    }
+                                }
+                            }
+                            else if (punktyBialego > punktyCzarnego) {
+                                if (mojKolor==2) {
+                                    wyslij("WYGRANA");
+                                    if (przeciwnik != null){
+                                        przeciwnik.wyslij("PRZEGRALES");
+                                    }
+                                        
+                                }else {
+                                    wyslij("PRZEGRALES");
+                                    if (przeciwnik != null){
+                                        przeciwnik.wyslij("WYGRANA");
+                                    } 
+                                }
+                            }
+                            else {
+                                wyslij("REMIS");
+                                if (przeciwnik != null) {
+                                    przeciwnik.wyslij("REMIS");
+                                }
+                            }
+
                         }
                         break;
                     }
@@ -98,6 +134,12 @@ public class ClientHandler implements Runnable {
                 int wynik = board.playMove(row, col, mojKolor);
 
                 if (wynik >= 0){
+                    if (mojKolor == 1) {
+                        punktyCzarnego += wynik;
+                    } else if (mojKolor == 2) {
+                        punktyBialego += wynik;
+                    }
+
                     kolejnePasy = 0;
                     String wiadomosc;
                     if (this.mojKolor == 1) {

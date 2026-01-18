@@ -86,6 +86,12 @@ public class Client{
                                 sluchacz.onScoreUpdate(kolor, punkty);
                             }
                         }
+                        else if (msg.equals("REMIS")) {
+                            if (sluchacz!= null) {
+                                sluchacz.onGameEnd("Remis");
+                            }
+                        }
+
                     }
                 }catch (IOException e){
                     System.out.println("rozłączono z serwerem");
