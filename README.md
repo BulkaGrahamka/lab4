@@ -1,7 +1,9 @@
 --- INSTRUKCJA URUCHOMIENIA PROJEKTU ---
 
-    1. uruchomienie serwera (java Server.java)
-    2. uruchomienie obu klientow (java Client.java) - pierwszy gracz jest czarny, drugi biały
+    0. wchodzimy w folder z pom.xml
+    1. javac -d target/classes src/main/java/org/example/server/Server.java src/main/java/org/example/server/ClientHandler.java src/main/java/org/example/board/Board.java (kompilacja serwera)
+    2. java -cp target/classes org.example.server.Server (uruchomienie serwera)
+    3. mvn clean javafx:run (uruchomienie klientów) - pierwszy gracz jest czarny, a drugi biały
 
 --- SCHEMAT PROJEKTU ---
 
@@ -9,6 +11,14 @@
     |--- Board.java
     | client
     |--- Client.java
+    | gui
+    |--- BoardView.java
+    |--- Field.java
+    |--- GameStateListener.java
+    |--- GameWindow.java
+    |--- GoApp
+    |--- ScoreBoard
+    |--- StoneType
     | server
     |--- Clienthadler.java
     |--- Server.java
