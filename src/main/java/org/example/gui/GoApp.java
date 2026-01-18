@@ -1,14 +1,23 @@
 package org.example.gui;
 
 import org.example.client.Client;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
+/**
+ * Główna klasa aplikacji klienta, odpowiedzialna za uruchomienie
+ * interfejsu graficznego JavaFX i zainicjowanie połączenia z serwerem.
+ */
 public class GoApp extends Application {
 
+    /**
+     * Metoda startowa dla aplikacji JavaFX. Tworzy główne okno gry,
+     * inicjuje klienta sieciowego w osobnym wątku i łączy logikę
+     * sieciową z interfejsem graficznym.
+     *
+     * @param stage Główna scena (okno) aplikacji.
+     */
     @Override
     public void start(Stage stage) {
         System.out.println("START GUI");
@@ -20,6 +29,7 @@ public class GoApp extends Application {
         stage.setScene(scena);
         stage.show();
 
+        // Uruchomienie logiki sieciowej w osobnym wątku, aby nie blokować GUI
         new Thread(() -> {
             Client klient = new Client();
             klient.ustawGameStateListener(okno);
@@ -28,7 +38,4 @@ public class GoApp extends Application {
         }).start();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
