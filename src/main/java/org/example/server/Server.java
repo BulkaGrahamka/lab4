@@ -10,7 +10,7 @@ public class Server {
     private Socket gracz1;
     private Socket gracz2;
     private final Board board = new Board(19);
-    private boolean graZBotem = false;
+    private boolean trybBot = false;
 
 
     public static void main(String[] args){
@@ -36,23 +36,35 @@ public class Server {
                     out.println("POŁĄCZONO");
 
                 } else if(gracz2 == null){
-                    gracz2 = clientSocket;
-                    System.out.println("gracz 2 (biały) połączony :)");
-                    System.out.println("dwóch graczy połączonych - zaczynamy gre! powodzenia!!");
+                    if (trybBot) {
+                        ClientHandler handler1 = new ClientHandler(gracz1, board, 1);
+                        BotHandler bot = new BotHandler(board, 2);
 
-                    ClientHandler handler1 = new ClientHandler(gracz1, board, 1);
-                    ClientHandler handler2 = new ClientHandler(gracz2, board, 2);
+                        handler1.ustawPrzeciwnika(bot);
+                        bot.ustawPrzeciwnika(handler1);
+
+                        new Thread(handler1).start();
+                        handler1.wyslij("START CZARNY");
+                        handler1.wyslij("TWOJ_RUCH");
+                        
+                    } else {
+                        gracz2 = clientSocket;
+                        System.out.println("gracz 2 (biały) połączony :)");
+                        System.out.println("dwóch graczy połączonych - zaczynamy gre! powodzenia!!");
+
+                        ClientHandler handler1 = new ClientHandler(gracz1, board, 1);
+                        ClientHandler handler2 = new ClientHandler(gracz2, board, 2);
 
 
-                    handler1.ustawprzeciwnika(handler2);
-                    handler2.ustawprzeciwnika(handler1);
-                    new Thread(handler1).start();
-                    new Thread(handler2).start();
+                        handler1.ustawprzeciwnika(handler2);
+                        handler2.ustawprzeciwnika(handler1);
+                        new Thread(handler1).start();
+                        new Thread(handler2).start();
 
-                    handler1.wyslij("START CZARNY");
-                    handler2.wyslij("START BIALY");
-                    handler1.wyslij("TWOJ_RUCH");
-
+                        handler1.wyslij("START CZARNY");
+                        handler2.wyslij("START BIALY");
+                        handler1.wyslij("TWOJ_RUCH");
+                    }
                 }else{
                     System.out.println("niestety ten serwer jeest pełny :( odrzucam połączenie...");
                     PrintWriter tempOut = new PrintWriter(clientSocket.getOutputStream(), true);

@@ -54,6 +54,11 @@ public class ClientHandler implements Runnable, Player {
         try {
             String linia;
             while ((linia = in.readLine()) != null) {
+                if (linia.equals("BOT")) {
+        
+                    continue;
+                }
+
                 if (linia.equals("PASS")) {
 
                     if (mojKolor != aktualnyGracz) {
