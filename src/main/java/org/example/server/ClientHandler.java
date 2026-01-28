@@ -8,13 +8,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 
-public class ClientHandler implements Runnable {
+public class ClientHandler implements Runnable, Player {
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
     private final Board board;
     private final int mojKolor;
-    private ClientHandler przeciwnik;
+    private Player przeciwnik;
     private boolean poprzedniPas = false;
     private static int aktualnyGracz = 1;
     private static int kolejnePasy = 0;
@@ -35,9 +35,19 @@ public class ClientHandler implements Runnable {
     public void wyslij(String wiadomosc) {
         out.println(wiadomosc);
     }
-    public void ustawprzeciwnika(ClientHandler przeciwnik) {
-        this.przeciwnik = przeciwnik;
+    @Override
+    public void ustawprzeciwnika(Player przeciwnik) {
+        this.przeciwnik = (ClientHandler) przeciwnik;
     }
+    @Override
+    public int getKolor() {
+        return mojKolor;
+    }
+    @Override
+    public void wykonajRuch() {
+
+    }
+
 
     @Override
     public void run() {
@@ -174,6 +184,7 @@ public class ClientHandler implements Runnable {
                     wyslij("TWOJ_RUCH");
                 }
             }
+
         } catch (IOException e) {
             System.out.println("Klient rozłączony: " + socket.getInetAddress());
         } finally {
@@ -181,6 +192,8 @@ public class ClientHandler implements Runnable {
                 socket.close();
             } catch (IOException ignored) { }
         }
+
     }
+
 }
 
