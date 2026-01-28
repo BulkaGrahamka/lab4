@@ -25,6 +25,8 @@ public class GameWindow implements GameStateListener {
     private final Button przyciskPas;
     private final Button przyciskPoddaj;
     private final ScoreBoard panelWynikow;
+    private Button przyciskBot;
+
 
     /**
      * Tworzy nowy obiekt okna gry i inicjalizuje jego układ.
@@ -35,6 +37,7 @@ public class GameWindow implements GameStateListener {
         panelWynikow = new ScoreBoard();
         przyciskPas = new Button("Pas");
         przyciskPoddaj = new Button("Poddaj się");
+        przyciskBot = new Button("Graj z botem");
         inicjalizujUklad();
     }
 
@@ -76,8 +79,15 @@ public class GameWindow implements GameStateListener {
                 pasekStatusu.setText("Poddano grę");
             }
         });
+        przyciskBot.setOnAction(e -> {
+            if (klient != null) {
+                klient.grajZBotem();
+                pasekStatusu.setText("Rozpoczynam grę z botem");
+            }
+        });
 
-        VBox panelPrawy = new VBox(15, panelWynikow, przyciskPas, przyciskPoddaj);
+
+        VBox panelPrawy = new VBox(15, panelWynikow, przyciskBot, przyciskPas, przyciskPoddaj);
         panelPrawy.setStyle("-fx-padding: 10;");
         korzen.setRight(panelPrawy);
     }

@@ -166,4 +166,11 @@ public class Client {
         }
         out.println("RESIGN");
     }
+    public void grajZBotem() {
+    if (out == null) {
+        return;
+    }
+    out.println("BOT");
+}
+
 }

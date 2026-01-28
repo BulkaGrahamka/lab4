@@ -10,6 +10,7 @@ public class Server {
     private Socket gracz1;
     private Socket gracz2;
     private final Board board = new Board(19);
+    private boolean graZBotem = false;
 
 
     public static void main(String[] args){
