@@ -1,5 +1,7 @@
 package org.example.gui;
 
+import java.util.function.Consumer;
+
 import org.example.client.Client;
 import javafx.application.Platform;
 import javafx.scene.Parent;
@@ -26,6 +28,8 @@ public class GameWindow implements GameStateListener {
     private final Button przyciskPoddaj;
     private final ScoreBoard panelWynikow;
     private boolean graRozpoczeta = false;
+    private Consumer<Field> obslugaKlikniecia = null;
+
 
     /**
      * Tworzy nowy obiekt okna gry i inicjalizuje jego układ.
@@ -38,6 +42,10 @@ public class GameWindow implements GameStateListener {
         przyciskPoddaj = new Button("Poddaj się");
         inicjalizujUklad();
     }
+    public void ustawObslugeKlikniecia(Consumer<Field> obsluga) {
+        this.obslugaKlikniecia = obsluga;
+    }
+
 
     /**
      * Ustawia referencję do obiektu klienta, aby GUI mogło wysyłać ruchy.
@@ -87,8 +95,12 @@ public class GameWindow implements GameStateListener {
      * Tworzy i umieszcza na scenie nową planszę o zadanym rozmiarze.
      * @param rozmiar Rozmiar planszy.
      */
-    private void utworzNowaPlansze(int rozmiar) {
+    protected void utworzNowaPlansze(int rozmiar) {
         plansza = new BoardView(rozmiar, pole -> {
+            if (obslugaKlikniecia != null) {
+                obslugaKlikniecia.accept(pole);
+                return;
+            }
             int wiersz = pole.getWiersz();
             int kolumna = pole.getKolumna();
             if (!mojaTura) {

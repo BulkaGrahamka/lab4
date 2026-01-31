@@ -4,6 +4,8 @@ import org.example.client.Client;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.bot.BotGameController;
+
 
 /**
  * Główna klasa aplikacji klienta, odpowiedzialna za uruchomienie
@@ -39,6 +41,27 @@ public class GoApp extends Application {
                 klient.polaczzserwerem("localhost", 6767);
             }).start();
         });
+        startWindow.setOnPlayBot(() -> {
+            GameWindow gameWindow = new GameWindow();
+            scene.setRoot(gameWindow.getKorzen());
+
+            stage.setWidth(900);
+            stage.setHeight(800);
+
+            BotGameController kontroler =
+                    new BotGameController(gameWindow);
+
+            gameWindow.ustawKlienta(null);
+
+            gameWindow.ustawObslugeKlikniecia(pole ->
+                kontroler.ruchGracza(
+                    pole.getWiersz(),
+                    pole.getKolumna()
+                )
+            );
+        });
+
+
     }
 
 

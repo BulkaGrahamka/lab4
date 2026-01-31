@@ -10,6 +10,7 @@ public class StartWindow {
 
     private final VBox root;
     private Runnable onPlayHuman;
+    private Runnable onPlayBot;
 
     public StartWindow() {
         Label title = new Label("Gra Go");
@@ -30,6 +31,9 @@ public class StartWindow {
         });
 
         playBotBtn.setOnAction(e -> {
+            if (onPlayBot != null) {
+                onPlayBot.run();
+            }
         });
 
         replayBtn.setOnAction(e -> {
@@ -48,6 +52,10 @@ public class StartWindow {
     public void setOnPlayHuman(Runnable onPlayHuman) {
         this.onPlayHuman = onPlayHuman;
     }
+    public void setOnPlayBot(Runnable onPlayBot) {
+        this.onPlayBot = onPlayBot;
+    }
+
 
     public Parent getRoot() {
         return root;
