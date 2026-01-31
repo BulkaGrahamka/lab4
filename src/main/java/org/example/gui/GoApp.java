@@ -21,16 +21,17 @@ public class GoApp extends Application {
     @Override
     public void start(Stage stage) {
         StartWindow startWindow = new StartWindow();
-        Scene scene = new Scene(startWindow.getRoot(), 900, 800);
+        Scene scene = new Scene(startWindow.getRoot(), 400, 300);
 
         stage.setTitle("Gra Go");
         stage.setScene(scene);
         stage.show();
 
-        startWindow.setOnPlay(() -> {
+        startWindow.setOnPlayHuman(() -> {
             GameWindow gameWindow = new GameWindow();
             scene.setRoot(gameWindow.getKorzen());
-
+            stage.setWidth(900);
+            stage.setHeight(800);
             new Thread(() -> {
                 Client klient = new Client();
                 klient.ustawGameStateListener(gameWindow);

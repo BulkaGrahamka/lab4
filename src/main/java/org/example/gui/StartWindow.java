@@ -1,35 +1,52 @@
 package org.example.gui;
 
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.geometry.Pos;
 
 public class StartWindow {
 
     private final VBox root;
-    private Runnable onPlay;
+    private Runnable onPlayHuman;
 
     public StartWindow() {
         Label title = new Label("Gra Go");
-        title.setStyle("-fx-font-size: 24; -fx-font-weight: bold;");
+        title.setStyle("-fx-font-size: 22; -fx-font-weight: bold;");
 
-        Button playButton = new Button("Graj z graczem");
-        playButton.setPrefWidth(200);
+        Button playHumanBtn = new Button("Graj z graczem");
+        Button playBotBtn = new Button("Graj z botem");
+        Button replayBtn = new Button("Odtwórz poprzednie gry");
 
-        playButton.setOnAction(e -> {
-            if (onPlay != null) {
-                onPlay.run();
+        playHumanBtn.setPrefWidth(220);
+        playBotBtn.setPrefWidth(220);
+        replayBtn.setPrefWidth(220);
+
+        playHumanBtn.setOnAction(e -> {
+            if (onPlayHuman != null) {
+                onPlayHuman.run();
             }
         });
 
-        root = new VBox(20, title, playButton);
+        playBotBtn.setOnAction(e -> {
+        });
+
+        replayBtn.setOnAction(e -> {
+        });
+
+        root = new VBox(15,
+                title,
+                playHumanBtn,
+                playBotBtn,
+                replayBtn
+        );
         root.setAlignment(Pos.CENTER);
+        root.setStyle("-fx-padding: 20;");
     }
 
-    public void setOnPlay(Runnable onPlay) {
-        this.onPlay = onPlay;
+    public void setOnPlayHuman(Runnable onPlayHuman) {
+        this.onPlayHuman = onPlayHuman;
     }
 
     public Parent getRoot() {
