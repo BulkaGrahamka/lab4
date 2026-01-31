@@ -15,4 +15,6 @@ public interface GameStateListener {
     void onGameEnd(String komunikat);
     /** Wywoływane, gdy jeden z graczy zdobędzie punkty. */
     void onScoreUpdate(String kolor, int punkty);
+    void onGameStart();
+
 }

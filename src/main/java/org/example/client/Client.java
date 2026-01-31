@@ -101,6 +101,12 @@ public class Client {
                                 sluchacz.onGameEnd("Remis");
                             }
                         }
+                        else if (finalMsg.startsWith("START")) {
+                            if (sluchacz != null) {
+                                sluchacz.onGameStart();
+                            }
+                        }
+
 
                     }
                 } catch (IOException e) {

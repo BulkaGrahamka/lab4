@@ -25,6 +25,7 @@ public class GameWindow implements GameStateListener {
     private final Button przyciskPas;
     private final Button przyciskPoddaj;
     private final ScoreBoard panelWynikow;
+    private boolean graRozpoczeta = false;
 
     /**
      * Tworzy nowy obiekt okna gry i inicjalizuje jego układ.
@@ -56,7 +57,7 @@ public class GameWindow implements GameStateListener {
         korzen.setTop(gornyPanel);
         korzen.setBottom(pasekStatusu);
 
-        utworzNowaPlansze(19);
+        
 
         przyciskPas.setOnAction(e -> {
             if (!mojaTura) {
@@ -131,6 +132,17 @@ public class GameWindow implements GameStateListener {
             pasekStatusu.setText(komunikat);
         });
     }
+    @Override
+    public void onGameStart() {
+        Platform.runLater(() -> {
+            if (!graRozpoczeta) {
+                utworzNowaPlansze(19);
+                graRozpoczeta = true;
+                pasekStatusu.setText("Oczekiwanie na ruch...");
+            }
+        });
+    }
+
 
     @Override
     public void onScoreUpdate(String kolor, int punkty) {

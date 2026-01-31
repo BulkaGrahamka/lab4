@@ -20,22 +20,25 @@ public class GoApp extends Application {
      */
     @Override
     public void start(Stage stage) {
-        System.out.println("START GUI");
-
-        GameWindow okno = new GameWindow();
-        Scene scena = new Scene(okno.getKorzen(), 900, 800);
+        StartWindow startWindow = new StartWindow();
+        Scene scene = new Scene(startWindow.getRoot(), 900, 800);
 
         stage.setTitle("Gra Go");
-        stage.setScene(scena);
+        stage.setScene(scene);
         stage.show();
 
-        // Uruchomienie logiki sieciowej w osobnym wątku, aby nie blokować GUI
-        new Thread(() -> {
-            Client klient = new Client();
-            klient.ustawGameStateListener(okno);
-            okno.ustawKlienta(klient);
-            klient.polaczzserwerem("localhost", 6767);
-        }).start();
+        startWindow.setOnPlay(() -> {
+            GameWindow gameWindow = new GameWindow();
+            scene.setRoot(gameWindow.getKorzen());
+
+            new Thread(() -> {
+                Client klient = new Client();
+                klient.ustawGameStateListener(gameWindow);
+                gameWindow.ustawKlienta(klient);
+                klient.polaczzserwerem("localhost", 6767);
+            }).start();
+        });
     }
+
 
 }
