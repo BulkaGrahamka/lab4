@@ -2,6 +2,7 @@ package org.example.gui;
 
 import java.util.function.Consumer;
 
+import org.example.bot.BotGameController;
 import org.example.client.Client;
 import javafx.application.Platform;
 import javafx.scene.Parent;
@@ -29,6 +30,8 @@ public class GameWindow implements GameStateListener {
     private final ScoreBoard panelWynikow;
     private boolean graRozpoczeta = false;
     private Consumer<Field> obslugaKlikniecia = null;
+    private BotGameController kontrolerBota = null;
+
 
 
     /**
@@ -45,6 +48,10 @@ public class GameWindow implements GameStateListener {
     public void ustawObslugeKlikniecia(Consumer<Field> obsluga) {
         this.obslugaKlikniecia = obsluga;
     }
+    public void ustawKontrolerBota(BotGameController kontroler) {
+        this.kontrolerBota = kontroler;
+    }
+
 
 
     /**
@@ -68,23 +75,24 @@ public class GameWindow implements GameStateListener {
         
 
         przyciskPas.setOnAction(e -> {
-            if (!mojaTura) {
-                pasekStatusu.setText("Nie możesz spasować, to nie Twoja tura");
+            if (kontrolerBota != null) {
+                kontrolerBota.pasGracza();
                 return;
             }
-            if (klient != null) {
-                klient.pas();
-                mojaTura = false;
-                pasekStatusu.setText("Wykonano pas - tura przeciwnika");
-            }
+            if (!mojaTura) return;
+            klient.pas();
+            mojaTura = false;
         });
 
         przyciskPoddaj.setOnAction(e -> {
-            if (klient != null) {
-                klient.poddajSie();
-                pasekStatusu.setText("Poddano grę");
+            if (kontrolerBota != null) {
+                kontrolerBota.poddajSie();
+                return;
             }
+            klient.poddajSie();
         });
+
+       
 
         VBox panelPrawy = new VBox(15, panelWynikow, przyciskPas, przyciskPoddaj);
         panelPrawy.setStyle("-fx-padding: 10;");
@@ -107,12 +115,17 @@ public class GameWindow implements GameStateListener {
                 pasekStatusu.setText("Czekaj na swoją turę");
                 return;
             }
-            if (klient != null) {
-                klient.wyslijRuch(wiersz, kolumna);
-                mojaTura = false;
-                pasekStatusu.setText("Ruch wysłany, tura przeciwnika");
+            if (kontrolerBota != null) {
+                kontrolerBota.ruchGracza(wiersz, kolumna);
+                return;
             }
+            klient.wyslijRuch(wiersz, kolumna);
+            pasekStatusu.setText("Ruch wysłany, tura przeciwnika");
+            mojaTura = false;
+
+                
         });
+
         korzen.setCenter(plansza);
     }
 

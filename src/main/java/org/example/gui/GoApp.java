@@ -41,7 +41,7 @@ public class GoApp extends Application {
                 klient.polaczzserwerem("localhost", 6767);
             }).start();
         });
-        startWindow.setOnPlayBot(() -> {
+       startWindow.setOnPlayBot(() -> {
             GameWindow gameWindow = new GameWindow();
             scene.setRoot(gameWindow.getKorzen());
 
@@ -51,15 +51,10 @@ public class GoApp extends Application {
             BotGameController kontroler =
                     new BotGameController(gameWindow);
 
+            gameWindow.ustawKontrolerBota(kontroler);
             gameWindow.ustawKlienta(null);
-
-            gameWindow.ustawObslugeKlikniecia(pole ->
-                kontroler.ruchGracza(
-                    pole.getWiersz(),
-                    pole.getKolumna()
-                )
-            );
         });
+
 
 
     }

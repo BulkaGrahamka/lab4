@@ -2,18 +2,22 @@ package org.example.bot;
 
 import org.example.board.Board;
 import org.example.gui.GameStateListener;
+
 import java.util.List;
 
-/**
- * Kontroler gry lokalnej: gracz (czarny) vs bot (biały).
- * Nie korzysta z serwera.
- */
 public class BotGameController {
 
     private final Board plansza;
     private final BotPlayer bot;
     private final GameStateListener interfejs;
+
     private boolean turaGracza = true;
+    private boolean graZakonczona = false;
+
+    private int punktyCzarnego = 0;
+    private int punktyBialego = 0;
+
+    private int kolejnePasy = 0;
 
     public BotGameController(GameStateListener interfejs) {
         this.interfejs = interfejs;
@@ -21,33 +25,55 @@ public class BotGameController {
         this.bot = new BotPlayer();
 
         interfejs.onGameStart();
-        interfejs.onYourTurn();
         interfejs.onBoardUpdate(konwertujPlansze());
+        interfejs.onYourTurn();
     }
 
-    /**
-     * Obsługa ruchu gracza (czarny).
-     */
     public void ruchGracza(int wiersz, int kolumna) {
-        if (!turaGracza) return;
+        if (!turaGracza || graZakonczona) return;
 
-        int wynik = plansza.playMove(wiersz, kolumna, 1);
-        if (wynik < 0) return;
+        int zbite = plansza.playMove(wiersz, kolumna, 1);
+        if (zbite < 0) return;
 
+        punktyCzarnego += zbite;
+        interfejs.onScoreUpdate("CZARNY", zbite);
+
+        kolejnePasy = 0;
         interfejs.onBoardUpdate(konwertujPlansze());
-        turaGracza = false;
 
+        turaGracza = false;
         wykonajRuchBota();
     }
 
-    /**
-     * Ruch bota (biały).
-     */
-    private void wykonajRuchBota() {
-        int[] ruchBota = bot.wybierzRuch(plansza, 19);
+    public void pasGracza() {
+        if (!turaGracza || graZakonczona) return;
 
-        if (ruchBota != null) {
-            plansza.playMove(ruchBota[0], ruchBota[1], 2);
+        kolejnePasy++;
+        if (sprawdzKoniecGry()) return;
+
+        turaGracza = false;
+        wykonajRuchBota();
+    }
+
+    public void poddajSie() {
+        if (graZakonczona) return;
+        graZakonczona = true;
+        interfejs.onGameEnd("Przegrałeś");
+    }
+
+    private void wykonajRuchBota() {
+        if (graZakonczona) return;
+
+        int[] ruch = bot.wybierzRuch(plansza, 19);
+
+        if (ruch == null) {
+            kolejnePasy++;
+            if (sprawdzKoniecGry()) return;
+        } else {
+            int zbite = plansza.playMove(ruch[0], ruch[1], 2);
+            punktyBialego += zbite;
+            interfejs.onScoreUpdate("BIALY", zbite);
+            kolejnePasy = 0;
         }
 
         interfejs.onBoardUpdate(konwertujPlansze());
@@ -55,20 +81,34 @@ public class BotGameController {
         interfejs.onYourTurn();
     }
 
-    /**
-     * Konwersja planszy Board → char[][] dla GUI
-     */
+    private boolean sprawdzKoniecGry() {
+        if (kolejnePasy >= 2) {
+            graZakonczona = true;
+
+            if (punktyCzarnego > punktyBialego) {
+                interfejs.onGameEnd("Wygrałeś!");
+            } else if (punktyBialego > punktyCzarnego) {
+                interfejs.onGameEnd("Przegrałeś");
+            } else {
+                interfejs.onGameEnd("Remis");
+            }
+            return true;
+        }
+        return false;
+    }
+
     private char[][] konwertujPlansze() {
         char[][] wynik = new char[19][19];
         List<String> linie = plansza.getBoardLines();
 
-        for (int wiersz = 0; wiersz < 19; wiersz++) {
-            String linia = linie.get(wiersz + 1);
-            for (int kolumna = 0; kolumna < 19; kolumna++) {
-                wynik[wiersz][kolumna] = linia.charAt(3 + kolumna * 2);
+        for (int w = 0; w < 19; w++) {
+            String linia = linie.get(w + 1);
+            for (int k = 0; k < 19; k++) {
+                wynik[w][k] = linia.charAt(3 + k * 2);
             }
         }
         return wynik;
     }
 }
+
 
