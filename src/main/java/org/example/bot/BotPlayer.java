@@ -7,6 +7,8 @@ public class BotPlayer {
 
     private static final int ROZMIAR = 19;
     private final Random los = new Random();
+    private static final int PROG_PASU = 5;
+
 
     public int[] wybierzRuch(Board plansza, int rozmiar) {
 
@@ -50,6 +52,9 @@ public class BotPlayer {
         ruchy.sort((a, b) -> Integer.compare(b.punkty, a.punkty));
 
         int najlepszy = ruchy.get(0).punkty;
+        if (najlepszy <= PROG_PASU) {
+            return null;
+        }
         List<Ruch> najlepsze = new ArrayList<>();
 
         for (Ruch r : ruchy) {
